@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Plus, X, Edit2, Trash2, BookOpen, Star, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
 // Supabase configuration - replace with your actual values
-const SUPABASE_URL = 'https://your-project-id.supabase.co';
-const SUPABASE_ANON_KEY = 'your-anon-key';
+const SUPABASE_URL = 'https://srrwkorfrnwmvqhplncr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNycndrb3Jmcm53bXZxaHBsbmNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxMDc1MTIsImV4cCI6MjA2MzY4MzUxMn0.BWM0gc3czjGaBe6LixZNS4IwqeKulZ0580xwBrGgXsU';
 
 // Simple Supabase client implementation
 class SupabaseClient {
