@@ -17,6 +17,7 @@ class SupabaseClient {
     };
   }
 
+  // DO NOT use 'async' here!
   from(table) {
     return {
       select: async (columns = '*') => {
@@ -26,30 +27,33 @@ class SupabaseClient {
         const data = await response.json();
         return { data, error: response.ok ? null : data };
       },
-      
       insert: async (values) => {
         const response = await fetch(`${this.url}/rest/v1/${table}`, {
           method: 'POST',
           headers: this.headers,
           body: JSON.stringify(values)
         });
-        const data = await response.json();
+        let data = null;
+        if (response.headers.get('content-type')?.includes('application/json')) {
+          data = await response.json();
+        }
         return { data, error: response.ok ? null : data };
       },
-      
-      update: async (values) => ({
+      update: (values) => ({
         eq: async (column, value) => {
           const response = await fetch(`${this.url}/rest/v1/${table}?${column}=eq.${value}`, {
             method: 'PATCH',
             headers: this.headers,
             body: JSON.stringify(values)
           });
-          const data = await response.json();
+          let data = null;
+          if (response.headers.get('content-type')?.includes('application/json')) {
+            data = await response.json();
+          }
           return { data, error: response.ok ? null : data };
         }
       }),
-      
-      delete: async () => ({
+      delete: () => ({
         eq: async (column, value) => {
           const response = await fetch(`${this.url}/rest/v1/${table}?${column}=eq.${value}`, {
             method: 'DELETE',
@@ -201,15 +205,17 @@ const App = () => {
     };
 
     try {
+      let error;
       if (editingId) {
-        const { error } = await supabase.from('arcs').update(dbData).eq('id', editingId);
-        if (error) throw error;
+        ({ error } = await supabase.from('arcs').update(dbData).eq('id', editingId));
       } else {
-        const { error } = await supabase.from('arcs').insert([dbData]);
-        if (error) throw error;
+        ({ error } = await supabase.from('arcs').insert([dbData]));
       }
-      
-      await loadArcs(); // Reload data
+      if (error) throw error;
+
+      // Add a short delay before reloading
+      await new Promise(res => setTimeout(res, 300));
+      await loadArcs();
       resetForm();
       setShowForm(false);
     } catch (error) {
@@ -419,7 +425,7 @@ const App = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Date Received</label>
                     <input
                       type="date"
-                      value={formData.receivedDate}
+                      value={formData.receivedDate || ''}
                       onChange={(e) => setFormData({...formData, receivedDate: e.target.value})}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
