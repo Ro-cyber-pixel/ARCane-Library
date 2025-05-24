@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, X, Edit2, Trash2, BookOpen, Star, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
 // Supabase configuration - replace with your actual values
@@ -17,7 +17,7 @@ class SupabaseClient {
     };
   }
 
-  async from(table) {
+  from(table) {
     return {
       select: async (columns = '*') => {
         const response = await fetch(`${this.url}/rest/v1/${table}?select=${columns}`, {
