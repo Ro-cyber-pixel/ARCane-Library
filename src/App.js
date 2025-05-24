@@ -242,7 +242,7 @@ const App = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this ARC?')) return;
+    if (!window.confirm('Are you sure you want to delete this ARC?')) return;
     
     try {
       const { error } = await supabase.from('arcs').delete().eq('id', id);
